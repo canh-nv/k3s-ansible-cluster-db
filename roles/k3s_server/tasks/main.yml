@@ -105,7 +105,7 @@
       ansible.builtin.replace:
         path: "{{ kubeconfig }}"
         regexp: 'name: default'
-        replace: 'name: k3s-ansible'
+        replace: 'name: {{cluster_name}}'
       delegate_to: 127.0.0.1
       become: false
 
@@ -113,8 +113,9 @@
       when: kubeconfig == "~/.kube/config.new" and kubectl_installed.rc == 0
       ansible.builtin.shell: |
         TFILE=$(mktemp)
-        KUBECONFIG=~/.kube/config.new kubectl rename-context default k3s-ansible
-        KUBECONFIG=~/.kube/config.new kubectl config set-context k3s-ansible --user=k3s-ansible --cluster=k3s-ansible
+        KUBECONFIG=~/.kube/config.new kubectl rename-context default {{cluster_name}}
+        KUBECONFIG=~/.kube/config.new kubectl config set-cluster {{cluster_name}} --server=https://{{ api_endpoint }}:{{ api_port }}
+        KUBECONFIG=~/.kube/config.new kubectl config set-context {{cluster_name}} --user={{cluster_name}} --cluster={{cluster_name}}
         KUBECONFIG=~/.kube/config.new:~/.kube/config kubectl config view --flatten > ${TFILE}
         mv ${TFILE} ~/.kube/config
         rm ~/.kube/config.new
