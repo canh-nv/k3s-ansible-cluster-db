@@ -80,6 +80,16 @@ Start provisioning of the cluster using the following command:
 ansible-playbook playbook/site.yml -i inventory.yml
 ```
 
+Reset the nodes to state before installing k3s
+
+```bash
+ansible-playbook playbook/reset.yml -i inventory.yml
+```
+
+## Install Service Loadbalancer
+
+- [Ingress-Nginx Controller](./ingress-nginx/README.md)
+
 ## Upgrading
 
 A playbook is provided to upgrade K3s on all nodes in the cluster. To use it, update `k3s_version` with the desired version in `inventory.yml` and run:
